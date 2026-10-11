@@ -1,5 +1,6 @@
 import {createSession,getPlan,proposeChange,commitProposal,completeTask,undoChange,formatTime} from './engine.mjs';
 import {interpret} from './conversation.mjs';
+import {auditPlan} from './audit.mjs';
 
 const $ = (id) => document.getElementById(id);
 const key = 'suppershift-v1';
@@ -96,6 +97,7 @@ function renderTimeline(plan) {
 }
 function render() {
   const plan = getPlan(session);
+  const audit = auditPlan(session,plan);
   $('current-time').textContent = formatTime(session.now);
   $('target-time').value = formatTime(session.target).slice(0,5);
   $('cooks').value = String(session.cooks); $('side').value = session.variant;
@@ -110,6 +112,9 @@ function render() {
   $('next-action-details').textContent = !Number.isFinite(plan.finish) ? (plan.reason || 'There are not enough available resources.') : next ? `${finiteTime(next.start)}–${finiteTime(next.end)} · ${next.instructions}` : 'All steps in this demo are complete. Reset to try another evening.';
   $('complete-step').disabled = !next || !Number.isFinite(plan.finish);
   renderTimeline(plan); renderProposal();
+  let auditNote = $('audit-note');
+  if (!auditNote) { auditNote=element('p','audit-note');auditNote.id='audit-note';$('timeline').after(auditNote); }
+  auditNote.textContent = audit.ok ? '✓ Plan checks passed: resource capacity, step order, and preserved progress.' : 'Plan checks need attention. Review the constraints before proceeding.';
   const log = $('event-log'); log.replaceChildren();
   const recent = (session.events || []).slice(-12).reverse();
   if (!recent.length) log.append(element('p','muted','A fresh start for tonight.'));
@@ -149,7 +154,10 @@ function confirm() {
   if (!Number.isFinite(proposal.after.finish)) { addMessage('assistant','This change cannot be scheduled, so I have kept your current plan. Please adjust the proposal first.'); return; }
   try {
     const summary = proposal.summary;
-    session = commitProposal(session,proposal); proposal=null; render();
+    const candidate = commitProposal(session,proposal);
+    const audit=auditPlan(candidate,getPlan(candidate));
+    if(!audit.ok) throw new Error(`The independent plan check found a conflict. I kept your current plan. ${audit.violations[0]?.message || ''}`);
+    session = candidate; proposal=null; render();
     addMessage('assistant',`Confirmed. ${summary} ${timingText(getPlan(session))}`);
   } catch (error) { proposal=null; renderProposal(); addMessage('assistant',error.message); }
 }
@@ -157,7 +165,9 @@ function finishStep() {
   const next = getPlan(session).nextTask;
   if (!next) return;
   try {
-    session = completeTask(session,next.id); proposal=null; render();
+    const candidate=completeTask(session,next.id);
+    if(!auditPlan(candidate,getPlan(candidate)).ok) throw new Error('This progress update failed the plan checks. The previous state is preserved.');
+    session = candidate; proposal=null; render();
     addMessage('assistant',`Demo clock advanced to ${formatTime(session.now)}. ${next.title} is complete. ${contextText()}`);
   } catch(error) { addMessage('assistant',error.message); }
 }
