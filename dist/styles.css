@@ -17,3 +17,28 @@
 @media(max-width:1100px) and (min-width:801px){.next-action #complete-step{margin-left:0}.next-copy{min-width:100%}}
 @media(max-width:540px){.next-action #complete-step{margin-left:0;margin-top:0}.next-copy{min-width:100%}}
 @media print{body{background:#fff}.site-header,.hero,.conversation-panel,.simulation-details,.site-footer,.setup-controls,.timeline-footer,.activity-details{display:none}.kitchen{border:0;box-shadow:none;margin:0}.workspace{display:block}.timeline-panel{padding:20px}.plan-summary{background:#fff}.timeline{min-height:0}.timeline-bar{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+/* Readable from a kitchen counter, with a compact hands-busy view. */
+.focus-button{font-size:12px;min-height:36px;padding:8px 12px;background:transparent}
+.focus-button[aria-pressed=true]{background:var(--green);border-color:var(--green);color:#fffef9}
+.message,.message.user{font-size:13px}.message-label{font-size:10px}
+.field label,.command-form>label,.metric-label{font-size:11px}
+.meal-heading>p:last-child,.section-description,.timeline-panel .section-description{font-size:12px}
+.suggestion-label{font-size:11px}.suggestions button{font-size:11px;min-height:33px;padding:6px 10px}
+.timeline-legend{font-size:11px;gap:13px}.timeline-axis{font-size:11px;margin-left:162px;position:sticky;top:0;z-index:1;background:var(--paper)}
+.timeline-row{grid-template-columns:152px minmax(0,1fr);gap:10px;min-height:64px}
+.timeline-label{font-size:12px}.timeline-label small{font-size:11px;line-height:1.4}
+.timeline-bar{font-size:11px;height:26px;top:1px}.timeline-track{min-height:28px}
+.timeline{max-height:480px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#c6cfbc transparent;overscroll-behavior:contain;padding-right:8px}
+.next-copy>p:last-child,.next-copy .demo-step-note{font-size:11px}.next-copy h3{font-size:14px}
+.next-action .button,.timeline-footer .text-button,.activity-details summary,.details-hint{font-size:11px}
+.event-log,.event-log time{font-size:11px}.proposal-actions .button{font-size:12px}.proposal-diff{font-size:12px}
+body.focus-mode .hero,body.focus-mode .simulation-details,body.focus-mode .site-footer{display:none}
+body.focus-mode .kitchen{margin-top:16px;margin-bottom:16px}
+body.focus-mode .transcript{height:170px;max-height:170px}
+body.focus-mode .timeline{min-height:0;max-height:340px;overflow-y:auto}
+@media(max-width:1100px){.site-header{gap:16px}.timeline-row{grid-template-columns:124px minmax(0,1fr)}.timeline-axis{margin-left:134px}}
+@media(max-width:800px){.timeline-row{grid-template-columns:155px minmax(0,1fr)}.timeline-axis{margin-left:165px}}
+@media(max-width:650px){.site-header{flex-wrap:wrap;gap:8px 14px}.focus-button{order:2;margin-left:auto;min-height:34px;font-size:11px}.site-header::after{content:'';width:100%;order:1}.header-reset{margin-left:3px}.header-context{margin-left:auto}.timeline-row{grid-template-columns:117px minmax(0,1fr);min-height:67px}.timeline-axis{margin-left:127px}.timeline-label{font-size:11px}.timeline-label small{font-size:11px}.timeline-legend{font-size:11px;gap:10px}.timeline-bar{font-size:11px}.metric-label{font-size:10px}.suggestions button{font-size:11px}.message,.message.user{font-size:13px}}
+@media print{.timeline,body.focus-mode .timeline{max-height:none;overflow:visible}.timeline-axis{position:static}}
+.audit-note{font-size:11px;line-height:1.5;margin:14px 0 0;color:#496c4e}.is-late,.proposal-warning{color:#a34d30}.proposal-comparison{display:flex;gap:16px;align-items:center;margin:12px 0;font-size:18px}.proposal-diff ul{padding-left:18px}.proposal-warning{font-size:12px;margin:10px 0}

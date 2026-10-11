@@ -38,6 +38,7 @@ Changing the target time, cook count, or side in the setup controls and choosing
 | --- | --- |
 | `dist/engine.mjs` | Authored task graphs, scheduling, proposed changes, versioned confirmation, progress and undo |
 | `dist/conversation.mjs` | Deterministic intent recognition and clarification |
+| `dist/audit.mjs`, `dist/vendor/plan-audit.mjs` | Domain adapter and independent schedule invariant checker; vendored MIT source from Plan Audit |
 | `dist/app.mjs` | DOM interface, local persistence, optional browser speech, text export |
 | `dist/index.html`, `dist/styles.css` | Accessible controls, visual timeline, original inline illustration and presentation |
 | `tests/` | Engine invariants and conversation cases |
@@ -49,7 +50,7 @@ State changes follow `proposeChange` → `commitProposal`. A revision and state 
 
 ## Verified evidence and limits
 
-The engine's 14 tests passed on 11 October 2026, including 36 generated combinations of menu, resource capacity, and oven availability. Checks cover dependency order, resource capacity, impossible deadlines, frozen progress, stale proposals, immutability, and undo. Additional conversation tests live in `tests/`; run the whole suite for the current total.
+All 32 application tests passed on 11 October 2026: 14 engine tests, 10 conversation and review tests, and 8 independent-audit integration tests. The engine fixtures include 36 generated combinations of menu, resource capacity, and oven availability. Checks cover dependency order, resource capacity, impossible deadlines, frozen progress, stale proposals, immutability, and undo. The independent checker accepts baseline, delayed, salad, and progress-preserving plans and rejects deliberately overbooked or corrupted solver output. Run the whole suite for the current total.
 
 Local benchmark: Windows x64, Node.js 20.18.0, 30 samples per fixture, measured 11 October 2026 at 03:15 UTC. These are **this machine's synthetic fixture results**, not a user study or measured real-kitchen savings.
 
@@ -62,6 +63,14 @@ Local benchmark: Windows x64, Node.js 20.18.0, 30 samples per fixture, measured 
 The benchmark also reports a fully sequential reference that performs all remaining stages one at a time. It is an intentionally simple comparison, not a model of a skilled cook. Durations and food instructions are authored demonstration estimates, not food-safety, nutrition, or allergy guidance.
 
 Keyboard and example-button interaction are the primary reproducible path. Optional speech recognition and synthesis are implemented through browser APIs but **have not yet been verified with a live microphone or spoken playback**. Support varies, and the browser provider may send audio to an online service. No Alexa voice or device integration is claimed.
+
+The audit adapter applies the session's current resource capacities to the entire supplied timeline, including completed work. Capacity history is simplified: reducing the crew below an earlier concurrent usage can therefore be rejected even when future work would fit. This is a deliberate fail-closed limitation, not proof that the historical schedule was invalid. Keep the recorded capacity or start a new demo session for that case. A late but resource-compliant schedule passes the invariant audit; an unschedulable result returns an explicit `UNSCHEDULED_PLAN` diagnostic. The audit is not a food-safety or optimality certification.
+
+## Intended Open Source mini-challenge contribution
+
+[Plan Audit](https://github.com/RuoyunHe/plan-audit) is an additional, independently reusable MIT-licensed component created for this project. It is a framework- and domain-agnostic JavaScript module that checks task intervals, dependencies, aggregate resource capacity, external reservations, and preservation of completed tasks without generating a schedule or calling any external service. Its standalone package includes a file-based CLI, an original dinner example, documentation, and 12 passing tests.
+
+SupperShift vendors its original module at `dist/vendor/plan-audit.mjs` with the license alongside it and uses `dist/audit.mjs` to map kitchen state into the generic contract. Integration tests exercise the real planner output and deliberately damaged plans. The component is published in the [public Plan Audit repository](https://github.com/RuoyunHe/plan-audit), with source, tests, documentation, example, and MIT license verified at [commit 4073945](https://github.com/RuoyunHe/plan-audit/commit/4073945b6a682163a0a8e9791c7ca0d302b5dabe). It is the intended Open Source mini-challenge contribution; the formal Devpost competition submission has not yet been completed. This additional contribution is separate from the main Alexa+ simulation.
 
 ## Data and cost
 
