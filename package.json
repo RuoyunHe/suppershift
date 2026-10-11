@@ -1,0 +1,12 @@
+{
+  "name": "suppershift",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An Alexa+ simulated kitchen companion with a real constraint-based replanning engine.",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "test": "node --test",
+    "benchmark": "node tools/benchmark.mjs"
+  }
+}

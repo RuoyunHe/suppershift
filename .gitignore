@@ -1,0 +1,7 @@
+evidence/
+submission/private/
+node_modules/
+.env
+.env.*
+*.log
+.openai/
