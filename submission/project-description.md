@@ -4,7 +4,7 @@
 
 **Primary track:** Alexa+ — simulated experience. **Mini challenge:** Open Source, through the independently reusable [Plan Audit component](https://github.com/RuoyunHe/plan-audit). **Status:** Formally submitted on 11 October 2026; Devpost displayed “Project submitted!” for the [public project](https://devpost.com/software/suppershift-dinner-plans-that-survive-real-life). Required fields, including Additional info and the public video, are complete. Organizer eligibility approval and awards are not claimed.
 
-**Local revision, 13 October 2026:** the improvements and checks below describe the latest local source. Deployment and online verification of this revision are pending. The published 11 October video remains valid for the earlier release; this revised description has not yet been confirmed as synchronized to Devpost.
+**Published revision, 13 October 2026:** source `a511bc9` (core `24461fe`), Pages `20694e85efcb1f204b4bd18b454978097b173ca9`, and Plan Audit `b7ac61527c0229d35f47688f0b208608dca361db` are published. Online Chrome verified preview reload, recovery cards at 19:04/18:32, confirmed salad at 18:32 with audit passing, and progress reload at 18:06 with two minutes of preheating remaining. This description, two new gallery images, revised Open Source evidence, and feedback were saved in Devpost; finalization remained SUBMITTED, 5/5. The 11 October video remains valid for the earlier release. Latest confirmation: `evidence/submitted-update-2026-10-13.jpg`.
 
 ## Inspiration
 
@@ -26,7 +26,7 @@ The conversational layer is deliberately deterministic. Supported phrases become
 
 If another tab updates the saved kitchen, the current tab pauses changes and asks the user to refresh the saved state. Local browser checks confirmed that a stale oven proposal could not overwrite another tab's progress. This local guard does not claim transactional multi-tab or multi-device synchronization.
 
-An additional open-source contribution, [Plan Audit](https://github.com/RuoyunHe/plan-audit), independently checks the structured schedule against time, dependency, capacity, reservation, and completed-work invariants. The MIT-licensed module is framework- and domain-agnostic and has no runtime dependencies. Its latest local examples include shared laboratory equipment: a valid plan passes, while a plan demanding three simultaneous centrifuges with capacity two returns `RESOURCE_OVERLOAD` and CLI exit code 1. The source README provides complete-repository test instructions. SupperShift vendors the checker with its license and maps kitchen state through a small adapter.
+An additional open-source contribution, [Plan Audit](https://github.com/RuoyunHe/plan-audit), independently checks the structured schedule against time, dependency, capacity, reservation, and completed-work invariants. The MIT-licensed module is framework- and domain-agnostic and has no runtime dependencies. Its examples include shared laboratory equipment: a valid plan passes, while a plan demanding three simultaneous centrifuges with capacity two returns `RESOURCE_OVERLOAD` and CLI exit code 1. The source README provides complete-repository test instructions. SupperShift vendors the checker with its license and maps kitchen state through a small adapter.
 
 ## What was challenging
 
@@ -38,7 +38,7 @@ The demo clock required equal care. Advancing a step also records other steps th
 
 All 43 application tests and 13 standalone Plan Audit tests passed on 13 October 2026. They include 36 generated combinations of resources, menus, and oven calendars, deliberately damaged solver output, recovery options, pending-preview identity restoration, and numeric boundaries. They check dependencies, resource limits, late and impossible plans, immutability, progress preservation, stale confirmations, and undo protection.
 
-Local Chrome checks exercised both recovery choices, the salad finish at 18:32, and an unconfirmed preview surviving reload without applying itself. Reload also preserved progress at 18:06 and showed two minutes of oven preheating remaining. A simulated 375px viewport had document scroll width 375px and 44px-high recovery buttons. These are browser checks, not physical-phone testing. The revised source has not yet been deployed or verified online.
+Local Chrome checks exercised both recovery choices, the salad finish at 18:32, and an unconfirmed preview surviving reload without applying itself. Reload also preserved progress at 18:06 and showed two minutes of oven preheating remaining. A simulated 375px viewport had document scroll width 375px and 44px-high recovery buttons. These are browser checks, not physical-phone testing. The source and tests for this revision are available in the public repositories.
 
 On 11 October, one Windows x64 development machine using Node.js 20.18.0 measured p95 planning times of 1.109 ms for the default meal, 62.976 ms for the oven delay, and 49.807 ms for the salad repair across 30-run fixtures. These are earlier-release synthetic local benchmarks, not new-version timings, real cooking measurements, or a user study. The benchmark script is included. The [published 156.88-second video](https://youtu.be/LDKdcPvShlE) also shows that earlier release and remains available with English narration and subtitles.
 
