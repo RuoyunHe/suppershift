@@ -21,6 +21,7 @@
   </header>
 
   <main>
+    <aside id="session-conflict" class="session-conflict" role="alert" hidden><p><strong>Your kitchen changed in another tab.</strong> This tab has paused updates to protect the newer saved progress.</p><button id="reload-session" class="button button-dark" type="button">Refresh saved kitchen</button></aside>
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow"><span class="short-rule" aria-hidden="true"></span>A little less kitchen chaos</p>
@@ -66,6 +67,11 @@
         <div class="summary-metric summary-status"><span class="metric-label">How we’re doing</span><strong id="plan-status">Ready when you are</strong></div>
         <p id="plan-note" class="plan-note">A small change doesn’t have to derail dinner.</p>
       </div>
+
+      <section id="recovery-panel" class="recovery-panel" aria-labelledby="recovery-title" hidden>
+        <div><p class="eyebrow">A choice, not a surprise</p><h2 id="recovery-title">Two ways back to dinner</h2><p>Calculated from your current progress. Review an option before applying it.</p></div>
+        <div id="recovery-options" class="recovery-options"></div>
+      </section>
 
       <div class="workspace">
         <section class="conversation-panel" aria-labelledby="conversation-title">
