@@ -15,6 +15,25 @@ export function parseTime(text) {
 }
 
 const clarification = (message) => ({ kind: 'clarify', message });
+// Read the entire numeric token before interpreting its unit. Word boundaries
+// alone would turn "1.2 cooks" into "2 cooks", or "1/2 minutes" into 2 minutes.
+const numericTokens = (text) => text.match(/[+\-−]?\s*(?:\d+(?:[.,/]\d+)*|\.\d+)(?:e[+\-]?\d+)?/gi) || [];
+function ambiguousQuantity(text) {
+  const tokens = numericTokens(text).map(token => token.trim());
+  return tokens.length > 1 || tokens.some(token => !/^\d+$/.test(token)) ||
+    /[\u00bc-\u00be\u2150-\u215f]/.test(text) ||
+    /\b(?:minus|negative)\s+(?:one|two|\d+)\b/.test(text) ||
+    /\b(?:one|two|\d+)\s*(?:or|to|[-–—/])\s*(?:one|two|\d+)\b/.test(text) ||
+    /\bbetween\s+(?:one|two|\d+)\s+and\s+(?:one|two|\d+)\b/.test(text);
+}
+
+function hasServingTimeContext(text) {
+  // "Dinner for 2" could mean two diners. A clock, meridiem, explicit
+  // preposition, or the target field distinguishes a serving-time request.
+  return /\d:\d|\d\s*(?:a\.?m\.?|p\.?m\.?)\b/i.test(text) ||
+    /\b(?:at|by|until)\s+\d|\btarget\b/.test(text);
+}
+
 export function interpret(raw) {
   const text = raw.trim().toLowerCase().replace(/[’]/g, "'");
   if (!text) return { kind: 'empty' };
@@ -36,6 +55,8 @@ export function interpret(raw) {
   if (/\bsalad\b|no[- ]oven/.test(text)) requests.push({ type: 'swap-side', variant: 'salad' });
   if (/\broast\b|\bcarrots\b/.test(text) && /\b(?:use|switch|instead|back|side)\b/.test(text)) requests.push({ type: 'swap-side', variant: 'roast' });
   if (/\boven\b/.test(text) && /\b(?:busy|occupied|delay|unavailable|blocked)\b/.test(text)) {
+    if (ambiguousQuantity(text))
+      return clarification('Please give one unambiguous whole-minute oven delay, such as “The oven is busy for 20 minutes.”');
     const matches = [...text.matchAll(/(?<![\w.+\-−])(\d+)\s*(?:minutes?|mins?)\b/g)];
     if (matches.length !== 1) return clarification('How long will the oven be busy? Use one whole-minute delay, such as “The oven is busy for 20 minutes.”');
     const minutes = Number(matches[0][1]);
@@ -44,15 +65,20 @@ export function interpret(raw) {
     requests.push({ type: 'oven-delay', minutes });
   }
   if (/\b(?:cooks?|helpers?|helping)\b|\bonly me\b|\balone\b/.test(text)) {
+    if (ambiguousQuantity(text))
+      return clarification('Please choose one unambiguous whole number of cooks: “One cook” or “Two cooks”.');
     const two = /\b(?:two|2|second|another)\s+(?:cooks?|helpers?)\b|\b(?:cooks?|helpers?)\s*:?\s*(?:two|2)\b/.test(text);
     const one = /\b(?:one|1)\s+(?:cooks?|helpers?)\b|\b(?:cooks?|helpers?)\s*:?\s*(?:one|1)\b|\bonly me\b|\balone\b/.test(text);
     if (two === one) return clarification('This demo supports one or two cooks. Try “Two cooks” or “Only me”.');
     requests.push({ type: 'cooks', value: two ? 2 : 1 });
   }
   if (/\b(?:dinner|serve|eat|ready|target)\b/.test(text)) {
-    const time = parseTime(text);
+    if (/\b(?:tomorrow|yesterday)\b|\bnext\s+(?:day|week)\b|\b(?:in|after)\s+\d+\s*(?:minutes?|mins?|hours?|hrs?)\b/.test(text))
+      return clarification('This demo uses one evening. Please give an absolute serving time for the demo day, such as “Dinner at 7 pm”.');
+    const hasTimeContext = hasServingTimeContext(text);
+    const time = hasTimeContext ? parseTime(text) : null;
     if (time !== null) requests.push({ type: 'target', value: time });
-    else if (requests.length === 0 || /\d/.test(text)) {
+    else if (requests.length === 0 || hasTimeContext) {
       if (/\b(?:plan|start)\b/.test(text) && !/\d/.test(text)) return { kind: 'context' };
       return clarification('What serving time do you have in mind? Give one valid time, such as “Can we eat at 6:20 pm?”');
     }
