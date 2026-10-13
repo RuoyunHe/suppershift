@@ -1,5 +1,5 @@
 import {createSession,getPlan,proposeChange,commitProposal,completeTask,undoChange,formatTime} from './engine.mjs';
-import {interpret} from './conversation.mjs';
+import {interpret} from './conversation.mjs?v=20261013';
 import {auditPlan} from './audit.mjs';
 import {saveExperience,restoreExperience,nextStepText,recoveryOptions} from './experience.mjs';
 
